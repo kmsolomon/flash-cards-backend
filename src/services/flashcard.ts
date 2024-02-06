@@ -13,3 +13,7 @@ export const create = async (flashcard: FlashCard) => {
 export const getCard = async (id: string) => {
   return await FlashCard.findByPk(id);
 };
+
+export const remove = async (id: string) => {
+  return await FlashCard.destroy({ where: { id: id } });
+};

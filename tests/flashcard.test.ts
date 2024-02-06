@@ -97,4 +97,52 @@ describe("/api/flashcard", () => {
       expect(response.status).toBe(404);
     });
   });
+
+  describe("DELETE /:id", () => {
+    test("When deleting an existing flash card, it should get a 200 response and delete the card", async () => {
+      const flashCardData = {
+        question: "Deleting flash card test",
+        answer: "Test test test",
+      };
+
+      const postResponse = await axiosClient.post(baseURL, flashCardData);
+      const deleteResponse = await axiosClient.delete(
+        `${baseURL}/${postResponse.data.id}`
+      );
+
+      expect(deleteResponse).toMatchObject({
+        status: 200,
+        data: {
+          message: "Flash card deleted.",
+        },
+      });
+
+      const getResponse = await axiosClient.get(
+        `${baseURL}/${postResponse.data.id}`
+      );
+
+      expect(getResponse.status).toBe(404);
+    });
+
+    test("When trying to delete a card with an invalid id it should return a 404 response.", async () => {
+      const nonExistingId = -1;
+      const response = await axiosClient.delete(`${baseURL}/${nonExistingId}`);
+      expect(response.status).toBe(404);
+    });
+
+    test("When trying to delete a card an already deleted card it should return a 404 response.", async () => {
+      const flashCardData = {
+        question: "Another deleting flash card test",
+        answer: "Test test test",
+      };
+
+      const postResponse = await axiosClient.post(baseURL, flashCardData);
+      await axiosClient.delete(`${baseURL}/${postResponse.data.id}`);
+      const secondDeleteResponse = await axiosClient.delete(
+        `${baseURL}/${postResponse.data.id}`
+      );
+
+      expect(secondDeleteResponse.status).toBe(404);
+    });
+  });
 });
