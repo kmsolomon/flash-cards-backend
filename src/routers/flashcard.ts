@@ -34,6 +34,61 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+function isString(text: unknown): text is string {
+  return typeof text === "string" || text instanceof String;
+}
+
+function parsePartialFlashCard(obj: unknown): Partial<FlashCard> {
+  const card: Partial<FlashCard> = {};
+  if (typeof obj !== "object" || obj === null) {
+    const err = new Error("Invalid data for flash card update.");
+    err.name = "ParseError";
+    throw err;
+  }
+  if ("question" in obj && isString(obj.question)) {
+    if (obj.question.length > 150) {
+      const err = new Error("Question max length (150) exceeded.");
+      err.name = "ParseError";
+      throw err;
+    }
+    card.question = obj.question;
+  }
+
+  if ("answer" in obj && isString(obj.answer)) {
+    if (obj.answer.length > 1000) {
+      const err = new Error("Answer max length (1000) exceeded.");
+      err.name = "ParseError";
+      throw err;
+    }
+    card.answer = obj.answer;
+  }
+  return card;
+}
+
+router.put("/:id", async (req, res, next) => {
+  try {
+    if (!isValidUUIDV4(req.params.id)) {
+      return res.status(404).send(NOTFOUND);
+    }
+
+    // may want to move the validation later
+    const partialCard = parsePartialFlashCard(req.body);
+
+    const updatedCard = await flashCardService.update(
+      req.params.id,
+      partialCard
+    );
+
+    if (!updatedCard) {
+      return res.status(404).send(NOTFOUND);
+    }
+
+    return res.status(200).send(updatedCard);
+  } catch (err) {
+    return next(err);
+  }
+});
+
 router.delete("/:id", async (req, res, next) => {
   try {
     if (!isValidUUIDV4(req.params.id)) {

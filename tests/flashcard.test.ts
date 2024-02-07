@@ -18,7 +18,7 @@ beforeAll(async () => {
 
 describe("/api/flashcard", () => {
   describe("POST", () => {
-    test("When creating an flash card with valid data, it should return the created object and get a 201 response", async () => {
+    test("When creating a flash card with valid data, it should return the created object and get a 201 response", async () => {
       const flashCardData = {
         question: "What does TDD stand for?",
         answer: "Test driven development.",
@@ -38,7 +38,7 @@ describe("/api/flashcard", () => {
       expect(isValidUUIDV4(response.data.id)).toBeTruthy();
     });
 
-    test("When creating an flash card when missing a field, it should return a 400 response", async () => {
+    test("When creating a flash card when missing a field, it should return a 400 response", async () => {
       const flashCardData = {
         question: "What does TDD stand for?",
       };
@@ -143,6 +143,73 @@ describe("/api/flashcard", () => {
       );
 
       expect(secondDeleteResponse.status).toBe(404);
+    });
+  });
+
+  describe("PUT", () => {
+    test("When updating a flash card with valid data, it should return the updated object and get a 201 response", async () => {
+      const flashCardData = {
+        question: "What does TDD stand for?",
+        answer: "Test driven development.",
+      };
+
+      const updatedData = {
+        question: "Foo?",
+        answer: "Bar!",
+      };
+
+      const postResponse = await axiosClient.post(baseURL, flashCardData);
+      const response = await axiosClient.put(
+        `${baseURL}/${postResponse.data.id}`,
+        updatedData
+      );
+
+      expect(response).toMatchObject({
+        status: 200,
+        data: {
+          id: postResponse.data.id,
+          question: updatedData.question,
+          answer: updatedData.answer,
+        },
+      });
+    });
+
+    test("When updating a flash card with a question that exceeds max length, it should return a 400 response", async () => {
+      const flashCardData = {
+        question: "What does TDD stand for?",
+        answer: "Test driven development.",
+      };
+
+      const updateQuestion = {
+        question: "a".repeat(151),
+      };
+
+      const postResponse = await axiosClient.post(baseURL, flashCardData);
+      const response = await axiosClient.put(
+        `${baseURL}/${postResponse.data.id}`,
+        updateQuestion
+      );
+
+      expect(response.status).toBe(400);
+    });
+
+    test("When updating a flash card with an answer that exceeds max length, it should return a 400 response", async () => {
+      const flashCardData = {
+        question: "What does TDD stand for?",
+        answer: "Test driven development.",
+      };
+
+      const updateAnswer = {
+        answer: "a".repeat(1001),
+      };
+
+      const postResponse = await axiosClient.post(baseURL, flashCardData);
+      const response = await axiosClient.put(
+        `${baseURL}/${postResponse.data.id}`,
+        updateAnswer
+      );
+
+      expect(response.status).toBe(400);
     });
   });
 });
