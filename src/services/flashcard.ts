@@ -1,4 +1,3 @@
-// get all cards
 import { FlashCard } from "../models";
 
 export const create = async (flashcard: FlashCard) => {
@@ -7,6 +6,10 @@ export const create = async (flashcard: FlashCard) => {
 
 export const getCard = async (id: string) => {
   return await FlashCard.findByPk(id);
+};
+
+export const getAll = async () => {
+  return await FlashCard.findAll();
 };
 
 export const remove = async (id: string) => {

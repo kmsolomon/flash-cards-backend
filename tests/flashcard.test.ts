@@ -71,6 +71,27 @@ describe("/api/flashcard", () => {
     });
   });
 
+  describe("GET /", () => {
+    test("When fetching all cards, it should retrieve them and get a 200 response", async () => {
+      const flashCardData = {
+        question: "One",
+        answer: "Test test test",
+      };
+      const flashCardData2 = {
+        question: "Two",
+        answer: "Test test test",
+      };
+
+      await axiosClient.post(baseURL, flashCardData);
+      await axiosClient.post(baseURL, flashCardData2);
+      const getResponse = await axiosClient.get(baseURL);
+
+      expect(getResponse.status).toBe(200);
+      expect(Array.isArray(getResponse.data)).toBeTruthy();
+      expect(getResponse.data.length).toBeGreaterThanOrEqual(2);
+    });
+  });
+
   describe("GET /:id", () => {
     test("When fetching an existing flash card, it should retrieve it and get a 200 response", async () => {
       const flashCardData = {

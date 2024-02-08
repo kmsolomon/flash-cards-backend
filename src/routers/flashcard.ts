@@ -25,6 +25,15 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
+router.get("/", async (_req, res, next) => {
+  try {
+    const cards = await flashCardService.getAll();
+    return res.status(200).json(cards);
+  } catch (err) {
+    return next(err);
+  }
+});
+
 function parsePartialFlashCard(obj: unknown): Partial<FlashCard> {
   const card: Partial<FlashCard> = {};
   if (typeof obj !== "object" || obj === null) {
