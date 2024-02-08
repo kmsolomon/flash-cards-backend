@@ -12,6 +12,7 @@ class CardSet extends Model<
   InferCreationAttributes<CardSet>
 > {
   declare id: CreationOptional<string>;
+  declare title: string;
   declare description: CreationOptional<string>;
 }
 
@@ -22,9 +23,12 @@ CardSet.init(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
+    title: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+    },
     description: {
       type: DataTypes.STRING(200),
-      allowNull: false,
     },
   },
   {

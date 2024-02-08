@@ -21,6 +21,10 @@ export const up: Migration = async ({ context: queryInterface }) => {
       defaultValue: Sequelize.literal("gen_random_uuid()"),
       primaryKey: true,
     },
+    title: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+    },
     description: {
       type: DataTypes.STRING(200),
     },

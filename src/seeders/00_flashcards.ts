@@ -37,7 +37,8 @@ export const up: Migration = async ({ context: queryInterface }) => {
   ]);
   await queryInterface.bulkInsert("cardsets", [
     {
-      description: "JavaScript Quiz",
+      title: "JavaScript Quiz",
+      description: "Trivia-style questions about JavaScript.",
     },
   ]);
 };
