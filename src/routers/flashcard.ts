@@ -25,19 +25,6 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-router.post("/", async (req, res, next) => {
-  try {
-    const flashcard = await flashCardService.create(req.body as FlashCard);
-    return res.status(201).json(flashcard);
-  } catch (err) {
-    return next(err);
-  }
-});
-
-function isString(text: unknown): text is string {
-  return typeof text === "string" || text instanceof String;
-}
-
 function parsePartialFlashCard(obj: unknown): Partial<FlashCard> {
   const card: Partial<FlashCard> = {};
   if (typeof obj !== "object" || obj === null) {
@@ -63,6 +50,27 @@ function parsePartialFlashCard(obj: unknown): Partial<FlashCard> {
     card.answer = obj.answer;
   }
   return card;
+}
+
+router.post("/", async (req, res, next) => {
+  try {
+    const card = parsePartialFlashCard(req.body);
+
+    if (!("question" in card) || !("answer" in card)) {
+      return res
+        .status(400)
+        .json({ error: "Could not create flash card. Invalid data format." });
+    }
+
+    const flashcard = await flashCardService.create(card as FlashCard);
+    return res.status(201).json(flashcard);
+  } catch (err) {
+    return next(err);
+  }
+});
+
+function isString(text: unknown): text is string {
+  return typeof text === "string" || text instanceof String;
 }
 
 router.put("/:id", async (req, res, next) => {
