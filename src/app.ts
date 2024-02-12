@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import * as dotenv from "dotenv";
 import flashCardRouter from "./routers/flashcard";
+import cardSetRouter from "./routers/cardset";
 import { handleError } from "./utils/request-error-middleware";
 
 const app = express();
@@ -25,6 +26,7 @@ if (isString(process.env.ALLOWED_ORIGINS)) {
 console.log("The node env is", process.env.NODE_ENV);
 app.use(express.json());
 app.use("/api/flashcard", flashCardRouter);
+app.use("/api/cardset", cardSetRouter);
 app.use(handleError);
 
 export { app };
