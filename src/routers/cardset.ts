@@ -80,4 +80,22 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
+router.delete("/:id", async (req, res, next) => {
+  try {
+    if (!isValidUUIDV4(req.params.id)) {
+      return res.status(404).send(NOTFOUND);
+    }
+
+    const removeSet = await cardSetService.remove(req.params.id);
+
+    if (removeSet === 0) {
+      return res.status(404).send(NOTFOUND);
+    } else {
+      return res.status(200).send({ message: "Card set deleted." });
+    }
+  } catch (err) {
+    return next(err);
+  }
+});
+
 export default router;

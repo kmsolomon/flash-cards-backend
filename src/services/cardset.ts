@@ -1,7 +1,5 @@
-// create set
 // update set -- set details or add/remove cards?
-// delete set
-// get set
+// get set and include associated cards
 // get all sets
 import { CardSet } from "../models";
 
@@ -11,4 +9,8 @@ export const create = async (cardSet: CardSet) => {
 
 export const getSet = async (id: string) => {
   return await CardSet.findByPk(id);
+};
+
+export const remove = async (id: string) => {
+  return await CardSet.destroy({ where: { id: id } });
 };
