@@ -65,6 +65,26 @@ describe("/api/flashcard", () => {
       expect(response.status).toBe(400);
     });
 
+    test("When creating a card set with a null value for the title field, it should return a 400 response", async () => {
+      const setData = {
+        title: null,
+      };
+
+      const response = await axiosClient.post(baseURL, setData);
+
+      expect(response.status).toBe(400);
+    });
+
+    test("When creating a card set with a blank string for the title field, it should return a 400 response", async () => {
+      const setData = {
+        title: "    ",
+      };
+
+      const response = await axiosClient.post(baseURL, setData);
+
+      expect(response.status).toBe(400);
+    });
+
     test("If the card set title is over 100 characters, it should return a 400 response", async () => {
       const cardSetData = {
         title: "a".repeat(101),

@@ -2,11 +2,11 @@ import express from "express";
 import * as cardSetService from "../services/cardset";
 import { CardSet } from "../models";
 import { isString } from "../utils/utils";
-//import { isValidUUIDV4 } from "../utils/utils";
+// import { isValidUUIDV4 } from "../utils/utils";
 
 const router = express.Router();
 
-//const NOTFOUND = { error: "Card set not found." };
+// const NOTFOUND = { error: "Card set not found." };
 
 function parsePartialCardSet(obj: unknown): Partial<CardSet> {
   const cardSet: Partial<CardSet> = {};
@@ -23,7 +23,20 @@ function parsePartialCardSet(obj: unknown): Partial<CardSet> {
       err.name = "ParseError";
       throw err;
     }
+    if (obj.title.trim() === "") {
+      const err = new Error("Card set title can not be empty.");
+      err.name = "ParseError";
+      throw err;
+    }
     cardSet.title = obj.title;
+  } else if ("title" in obj && !isString(obj.title)) {
+    const err = new Error("Card set title must be a string");
+    err.name = "ParseError";
+    throw err;
+  } else {
+    const err = new Error("Card set title can not be null.");
+    err.name = "ParseError";
+    throw err;
   }
 
   if ("description" in obj && isString(obj.description)) {
@@ -55,7 +68,7 @@ router.post("/", async (req, res, next) => {
 //       return res.status(404).send(NOTFOUND);
 //     }
 
-//     const cardSet = await cardSetService.getCard(req.params.id);
+//     const cardSet = await cardSetService.getSet(req.params.id);
 
 //     if (!cardSet) {
 //       return res.status(404).send(NOTFOUND);
