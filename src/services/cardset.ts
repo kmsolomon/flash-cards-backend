@@ -14,3 +14,21 @@ export const getSet = async (id: string) => {
 export const remove = async (id: string) => {
   return await CardSet.destroy({ where: { id: id } });
 };
+
+export const update = async (id: string, updates: Partial<CardSet>) => {
+  const cardSet = await getSet(id);
+
+  if (!cardSet) {
+    return null;
+  }
+
+  if (updates.title) {
+    cardSet.title = updates.title;
+  }
+
+  if (updates.description) {
+    cardSet.description = updates.description;
+  }
+
+  return await cardSet.save();
+};

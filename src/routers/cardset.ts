@@ -33,10 +33,6 @@ function parsePartialCardSet(obj: unknown): Partial<CardSet> {
     const err = new Error("Card set title must be a string");
     err.name = "ParseError";
     throw err;
-  } else {
-    const err = new Error("Card set title can not be null.");
-    err.name = "ParseError";
-    throw err;
   }
 
   if ("description" in obj && isString(obj.description)) {
@@ -53,6 +49,12 @@ function parsePartialCardSet(obj: unknown): Partial<CardSet> {
 router.post("/", async (req, res, next) => {
   try {
     const parsedData = parsePartialCardSet(req.body);
+
+    if (!("title" in parsedData)) {
+      const err = new Error("Card set title can not be null.");
+      err.name = "ParseError";
+      throw err;
+    }
 
     const cardSet = await cardSetService.create(parsedData as CardSet);
 
@@ -93,6 +95,26 @@ router.delete("/:id", async (req, res, next) => {
     } else {
       return res.status(200).send({ message: "Card set deleted." });
     }
+  } catch (err) {
+    return next(err);
+  }
+});
+
+router.put("/:id", async (req, res, next) => {
+  try {
+    if (!isValidUUIDV4(req.params.id)) {
+      return res.status(404).send(NOTFOUND);
+    }
+
+    const setUpdates = parsePartialCardSet(req.body);
+
+    const updated = await cardSetService.update(req.params.id, setUpdates);
+
+    if (!updated) {
+      return res.status(404).send(NOTFOUND);
+    }
+
+    return res.status(200).send(updated);
   } catch (err) {
     return next(err);
   }

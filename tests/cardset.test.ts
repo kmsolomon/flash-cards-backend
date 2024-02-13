@@ -1,4 +1,4 @@
-import { describe, expect, test } from "@jest/globals";
+import { describe, expect, test, beforeEach } from "@jest/globals";
 import axios, { Axios } from "axios";
 import * as dotenv from "dotenv";
 import { isValidUUIDV4 } from "../src/utils/utils";
@@ -16,7 +16,7 @@ beforeAll(async () => {
   axiosClient = axios.create(axiosConfig);
 });
 
-describe("/api/flashcard", () => {
+describe("/api/cardset", () => {
   describe("POST", () => {
     test("When creating a card set with valid data, it should return the created object and get a 201 response", async () => {
       const setData = {
@@ -181,6 +181,91 @@ describe("/api/flashcard", () => {
     test("Trying to use an invalid ID to delete a card returns a 404 response", async () => {
       const deleteResponse = await axiosClient.delete(`${baseURL}/-1`);
       expect(deleteResponse.status).toBe(404);
+    });
+  });
+  describe("PUT /:id", () => {
+    let id = "";
+    beforeEach(async () => {
+      const setData = {
+        title: "Update Test Suite",
+      };
+
+      const response = await axiosClient.post(baseURL, setData);
+      id = response.data.id;
+    });
+    test("When updating the card set title and description it should return the updated object with a 200 response", async () => {
+      const updates = {
+        title: "Updated!",
+        description: "Updated!!!",
+      };
+
+      const response = await axiosClient.put(`${baseURL}/${id}`, updates);
+      expect(response).toMatchObject({
+        status: 200,
+        data: {
+          ...updates,
+        },
+      });
+    });
+    test("When updating only the card set title it should return the updated object with a 200 response", async () => {
+      const updates = {
+        title: "My fancy title",
+      };
+
+      const response = await axiosClient.put(`${baseURL}/${id}`, updates);
+      expect(response).toMatchObject({
+        status: 200,
+        data: {
+          title: updates.title,
+          description: null,
+        },
+      });
+    });
+    test("When updating only the card set description it should return the updated object with a 200 response", async () => {
+      const updates = {
+        description: "My fancy description",
+      };
+
+      const response = await axiosClient.put(`${baseURL}/${id}`, updates);
+      expect(response).toMatchObject({
+        status: 200,
+        data: {
+          title: "Update Test Suite",
+          description: updates.description,
+        },
+      });
+    });
+    test("When trying to update the card set title to something longer than the max length it should return a 400 response", async () => {
+      const updates = {
+        title: "a".repeat(101),
+      };
+
+      const response = await axiosClient.put(`${baseURL}/${id}`, updates);
+      expect(response.status).toBe(400);
+    });
+    test("When trying to update the card set description to something longer than the max length it should return a 400 response", async () => {
+      const updates = {
+        description: "b".repeat(201),
+      };
+
+      const response = await axiosClient.put(`${baseURL}/${id}`, updates);
+      expect(response.status).toBe(400);
+    });
+    test("When trying to update the card set title to an empty string it should return a 400 response", async () => {
+      const updates = {
+        title: "   ",
+      };
+
+      const response = await axiosClient.put(`${baseURL}/${id}`, updates);
+      expect(response.status).toBe(400);
+    });
+    test("When trying to update the card set title to null it should return a 400 response", async () => {
+      const updates = {
+        title: null,
+      };
+
+      const response = await axiosClient.put(`${baseURL}/${id}`, updates);
+      expect(response.status).toBe(400);
     });
   });
 });
