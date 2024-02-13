@@ -2,11 +2,11 @@ import express from "express";
 import * as cardSetService from "../services/cardset";
 import { CardSet } from "../models";
 import { isString } from "../utils/utils";
-// import { isValidUUIDV4 } from "../utils/utils";
+import { isValidUUIDV4 } from "../utils/utils";
 
 const router = express.Router();
 
-// const NOTFOUND = { error: "Card set not found." };
+const NOTFOUND = { error: "Card set not found." };
 
 function parsePartialCardSet(obj: unknown): Partial<CardSet> {
   const cardSet: Partial<CardSet> = {};
@@ -62,22 +62,22 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-// router.get("/:id", async (req, res, next) => {
-//   try {
-//     if (!isValidUUIDV4(req.params.id)) {
-//       return res.status(404).send(NOTFOUND);
-//     }
+router.get("/:id", async (req, res, next) => {
+  try {
+    if (!isValidUUIDV4(req.params.id)) {
+      return res.status(404).send(NOTFOUND);
+    }
 
-//     const cardSet = await cardSetService.getSet(req.params.id);
+    const cardSet = await cardSetService.getSet(req.params.id);
 
-//     if (!cardSet) {
-//       return res.status(404).send(NOTFOUND);
-//     }
+    if (!cardSet) {
+      return res.status(404).send(NOTFOUND);
+    }
 
-//     return res.status(200).json(cardSet);
-//   } catch (err) {
-//     return next(err);
-//   }
-// });
+    return res.status(200).json(cardSet);
+  } catch (err) {
+    return next(err);
+  }
+});
 
 export default router;

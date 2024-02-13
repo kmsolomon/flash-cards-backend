@@ -8,3 +8,7 @@ import { CardSet } from "../models";
 export const create = async (cardSet: CardSet) => {
   return await CardSet.create(cardSet);
 };
+
+export const getSet = async (id: string) => {
+  return await CardSet.findByPk(id);
+};

@@ -106,4 +106,29 @@ describe("/api/flashcard", () => {
       expect(response.status).toBe(400);
     });
   });
+  describe("GET /:id", () => {
+    test("When fetching an existing card set, it should retrieve it and get a 200 response", async () => {
+      const cardSetData = {
+        title: "Fetching card set test",
+      };
+
+      const postResponse = await axiosClient.post(baseURL, cardSetData);
+      const getResponse = await axiosClient.get(
+        `${baseURL}/${postResponse.data.id}`
+      );
+
+      expect(getResponse).toMatchObject({
+        status: 200,
+        data: {
+          ...cardSetData,
+        },
+      });
+    });
+
+    test("When fetching a card set with an invalid ID, it should get a 404 response", async () => {
+      const nonExistingId = -1;
+      const response = await axiosClient.get(`${baseURL}/${nonExistingId}`);
+      expect(response.status).toBe(404);
+    });
+  });
 });
