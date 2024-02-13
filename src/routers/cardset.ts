@@ -58,7 +58,7 @@ router.post("/", async (req, res, next) => {
 
     const cardSet = await cardSetService.create(parsedData as CardSet);
 
-    return res.status(201).json(cardSet);
+    return res.status(201).send(cardSet);
   } catch (err) {
     return next(err);
   }
@@ -76,7 +76,17 @@ router.get("/:id", async (req, res, next) => {
       return res.status(404).send(NOTFOUND);
     }
 
-    return res.status(200).json(cardSet);
+    return res.status(200).send(cardSet);
+  } catch (err) {
+    return next(err);
+  }
+});
+
+router.get("/", async (_req, res, next) => {
+  try {
+    const cardSets = await cardSetService.getAll();
+
+    return res.status(200).send(cardSets);
   } catch (err) {
     return next(err);
   }

@@ -167,7 +167,7 @@ describe("/api/flashcard", () => {
     });
   });
 
-  describe("PUT", () => {
+  describe("PUT /:id", () => {
     test("When updating a flash card with valid data, it should return the updated object and get a 201 response", async () => {
       const flashCardData = {
         question: "What does TDD stand for?",

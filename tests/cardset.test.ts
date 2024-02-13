@@ -106,6 +106,24 @@ describe("/api/cardset", () => {
       expect(response.status).toBe(400);
     });
   });
+  describe("GET /", () => {
+    test("When fetching all card sets, it should retrieve them and get a 200 response", async () => {
+      const setData = {
+        title: "One",
+      };
+      const setData2 = {
+        title: "Two",
+      };
+
+      await axiosClient.post(baseURL, setData);
+      await axiosClient.post(baseURL, setData2);
+      const getResponse = await axiosClient.get(baseURL);
+
+      expect(getResponse.status).toBe(200);
+      expect(Array.isArray(getResponse.data)).toBeTruthy();
+      expect(getResponse.data.length).toBeGreaterThanOrEqual(2);
+    });
+  });
   describe("GET /:id", () => {
     test("When fetching an existing card set, it should retrieve it and get a 200 response", async () => {
       const cardSetData = {

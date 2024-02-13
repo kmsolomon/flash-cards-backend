@@ -11,6 +11,10 @@ export const getSet = async (id: string) => {
   return await CardSet.findByPk(id);
 };
 
+export const getAll = async () => {
+  return await CardSet.findAll();
+};
+
 export const remove = async (id: string) => {
   return await CardSet.destroy({ where: { id: id } });
 };
