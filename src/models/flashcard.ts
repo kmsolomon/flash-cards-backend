@@ -4,19 +4,17 @@ import {
   InferAttributes,
   InferCreationAttributes,
   CreationOptional,
+  ForeignKey,
 } from "sequelize";
 import { sequelize } from "../utils/db";
-
-// id: string;
-// question: string;
-// answer: string;
-// createdBy?: string;
+import CardSet from "./cardset";
 
 class FlashCard extends Model<
   InferAttributes<FlashCard>,
   InferCreationAttributes<FlashCard>
 > {
   declare id: CreationOptional<string>;
+  declare cardsetId: ForeignKey<CardSet["id"]>;
   declare question: string;
   declare answer: string;
 }

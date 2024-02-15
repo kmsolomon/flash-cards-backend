@@ -41,6 +41,16 @@ function parsePartialFlashCard(obj: unknown): Partial<FlashCard> {
     err.name = "ParseError";
     throw err;
   }
+
+  if ("cardsetId" in obj && isString(obj.cardsetId)) {
+    if (!isValidUUIDV4(obj.cardsetId)) {
+      const err = new Error("Invalid cardsetId.");
+      err.name = "ParseError";
+      throw err;
+    }
+    card.cardsetId = obj.cardsetId;
+  }
+
   if ("question" in obj && isString(obj.question)) {
     if (obj.question.length > 150) {
       const err = new Error("Question max length (150) exceeded.");
@@ -64,11 +74,23 @@ function parsePartialFlashCard(obj: unknown): Partial<FlashCard> {
 router.post("/", async (req, res, next) => {
   try {
     const card = parsePartialFlashCard(req.body);
+    const errors = [];
 
-    if (!("question" in card) || !("answer" in card)) {
-      return res
-        .status(400)
-        .json({ error: "Could not create flash card. Invalid data format." });
+    if (!("question" in card)) {
+      errors.push("question is a required field.");
+    }
+    if (!("answer" in card)) {
+      errors.push("answer is a required field.");
+    }
+    if (!("cardsetId" in card)) {
+      errors.push("cardsetId is a required field.");
+    }
+
+    if (errors.length > 0) {
+      return res.status(400).json({
+        message: "Could not create flash card. Invalid data format.",
+        errors: errors,
+      });
     }
 
     const flashcard = await flashCardService.create(card as FlashCard);

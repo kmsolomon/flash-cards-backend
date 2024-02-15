@@ -7,6 +7,7 @@ dotenv.config();
 
 let axiosClient: Axios;
 const baseURL = "/api/flashcard";
+let parentSetId: string;
 
 beforeAll(async () => {
   const axiosConfig = {
@@ -14,12 +15,19 @@ beforeAll(async () => {
     validateStatus: () => true,
   };
   axiosClient = axios.create(axiosConfig);
+
+  const response = await axiosClient.post("/api/cardset", {
+    title: "Flash card tests",
+  });
+
+  parentSetId = response.data.id;
 });
 
 describe("/api/flashcard", () => {
   describe("POST", () => {
     test("When creating a flash card with valid data, it should return the created object and get a 201 response", async () => {
       const flashCardData = {
+        cardsetId: parentSetId,
         question: "What does TDD stand for?",
         answer: "Test driven development.",
       };
@@ -39,17 +47,27 @@ describe("/api/flashcard", () => {
     });
 
     test("When creating a flash card when missing a field, it should return a 400 response", async () => {
-      const flashCardData = {
-        question: "What does TDD stand for?",
-      };
+      const response1 = await axiosClient.post(baseURL, {
+        question: "question",
+        answer: "answer",
+      });
+      const response2 = await axiosClient.post(baseURL, {
+        cardsetId: parentSetId,
+        answer: "answer",
+      });
+      const response3 = await axiosClient.post(baseURL, {
+        cardsetId: parentSetId,
+        question: "question",
+      });
 
-      const response = await axiosClient.post(baseURL, flashCardData);
-
-      expect(response.status).toBe(400);
+      expect(response1.status).toBe(400);
+      expect(response2.status).toBe(400);
+      expect(response3.status).toBe(400);
     });
 
     test("If the flash card question is over 150 characters, it should return a 400 response", async () => {
       const flashCardData = {
+        cardsetId: parentSetId,
         question: "a".repeat(151),
         answer: "foo",
       };
@@ -61,6 +79,7 @@ describe("/api/flashcard", () => {
 
     test("If the flash card answer is over 1000 characters, it should return a 400 response", async () => {
       const flashCardData = {
+        cardsetId: parentSetId,
         question: "foo",
         answer: "b".repeat(1001),
       };
@@ -74,10 +93,12 @@ describe("/api/flashcard", () => {
   describe("GET /", () => {
     test("When fetching all cards, it should retrieve them and get a 200 response", async () => {
       const flashCardData = {
+        cardsetId: parentSetId,
         question: "One",
         answer: "Test test test",
       };
       const flashCardData2 = {
+        cardsetId: parentSetId,
         question: "Two",
         answer: "Test test test",
       };
@@ -95,6 +116,7 @@ describe("/api/flashcard", () => {
   describe("GET /:id", () => {
     test("When fetching an existing flash card, it should retrieve it and get a 200 response", async () => {
       const flashCardData = {
+        cardsetId: parentSetId,
         question: "Fetching flash card test",
         answer: "Test test test",
       };
@@ -122,6 +144,7 @@ describe("/api/flashcard", () => {
   describe("DELETE /:id", () => {
     test("When deleting an existing flash card, it should get a 200 response and delete the card", async () => {
       const flashCardData = {
+        cardsetId: parentSetId,
         question: "Deleting flash card test",
         answer: "Test test test",
       };
@@ -153,6 +176,7 @@ describe("/api/flashcard", () => {
 
     test("When trying to delete a card an already deleted card it should return a 404 response.", async () => {
       const flashCardData = {
+        cardsetId: parentSetId,
         question: "Another deleting flash card test",
         answer: "Test test test",
       };
@@ -170,6 +194,7 @@ describe("/api/flashcard", () => {
   describe("PUT /:id", () => {
     test("When updating a flash card with valid data, it should return the updated object and get a 201 response", async () => {
       const flashCardData = {
+        cardsetId: parentSetId,
         question: "What does TDD stand for?",
         answer: "Test driven development.",
       };
@@ -191,12 +216,14 @@ describe("/api/flashcard", () => {
           id: postResponse.data.id,
           question: updatedData.question,
           answer: updatedData.answer,
+          cardsetId: parentSetId,
         },
       });
     });
 
     test("When updating a flash card with a question that exceeds max length, it should return a 400 response", async () => {
       const flashCardData = {
+        cardsetId: parentSetId,
         question: "What does TDD stand for?",
         answer: "Test driven development.",
       };
@@ -216,6 +243,7 @@ describe("/api/flashcard", () => {
 
     test("When updating a flash card with an answer that exceeds max length, it should return a 400 response", async () => {
       const flashCardData = {
+        cardsetId: parentSetId,
         question: "What does TDD stand for?",
         answer: "Test driven development.",
       };
