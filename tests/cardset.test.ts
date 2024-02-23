@@ -140,6 +140,7 @@ describe("/api/cardset", () => {
         status: 200,
         data: {
           ...cardSetData,
+          flashcards: [],
         },
       });
     });

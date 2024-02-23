@@ -2,14 +2,19 @@
 // get set and include associated cards
 // get all sets
 import sequelize from "sequelize";
-import { CardSet } from "../models";
+import { CardSet, FlashCard } from "../models";
 
 export const create = async (cardSet: CardSet) => {
   return await CardSet.create(cardSet);
 };
 
 export const getSet = async (id: string) => {
-  return await CardSet.findByPk(id);
+  return await CardSet.findByPk(id, {
+    include: {
+      model: FlashCard,
+      attributes: ["id", "question", "answer"],
+    },
+  });
 };
 
 export const getAll = async () => {
