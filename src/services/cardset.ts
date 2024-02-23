@@ -1,6 +1,7 @@
 // update set -- set details or add/remove cards?
 // get set and include associated cards
 // get all sets
+import sequelize from "sequelize";
 import { CardSet } from "../models";
 
 export const create = async (cardSet: CardSet) => {
@@ -12,7 +13,18 @@ export const getSet = async (id: string) => {
 };
 
 export const getAll = async () => {
-  return await CardSet.findAll();
+  return await CardSet.findAll({
+    attributes: {
+      include: [
+        [
+          sequelize.literal(
+            "(SELECT COUNT(*) from flashcards as cards where cards.cardset_id=cardset.id)"
+          ),
+          "cards",
+        ],
+      ],
+    },
+  });
 };
 
 export const remove = async (id: string) => {

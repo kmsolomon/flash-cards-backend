@@ -122,6 +122,7 @@ describe("/api/cardset", () => {
       expect(getResponse.status).toBe(200);
       expect(Array.isArray(getResponse.data)).toBeTruthy();
       expect(getResponse.data.length).toBeGreaterThanOrEqual(2);
+      expect(getResponse.data[0].cards).toBeDefined(); // confirm cards attribute is showing up
     });
   });
   describe("GET /:id", () => {
