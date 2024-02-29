@@ -2,6 +2,7 @@ import { describe, expect, test } from "@jest/globals";
 import axios, { Axios } from "axios";
 import * as dotenv from "dotenv";
 import { isValidUUIDV4 } from "../src/utils/utils";
+import { CardSet, FlashCard } from "../src/models/index";
 
 dotenv.config();
 
@@ -16,11 +17,19 @@ beforeAll(async () => {
   };
   axiosClient = axios.create(axiosConfig);
 
+  await FlashCard.truncate({ cascade: true });
+  await CardSet.truncate({ cascade: true });
+
   const response = await axiosClient.post("/api/cardset", {
     title: "Flash card tests",
   });
 
   parentSetId = response.data.id;
+});
+
+afterAll(async () => {
+  await FlashCard.truncate({ cascade: true });
+  await CardSet.truncate({ cascade: true });
 });
 
 describe("/api/flashcard", () => {
