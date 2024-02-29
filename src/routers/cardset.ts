@@ -3,8 +3,11 @@ import * as cardSetService from "../services/cardset";
 import { CardSet } from "../models";
 import { isString } from "../utils/utils";
 import { isValidUUIDV4 } from "../utils/utils";
+import flashCardRouter from "./flashcard";
 
 const router = express.Router();
+
+router.use("/:setId/flashcard", flashCardRouter);
 
 const NOTFOUND = { error: "Card set not found." };
 

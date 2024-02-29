@@ -3,7 +3,7 @@ import * as flashCardService from "../services/flashcard";
 import { FlashCard } from "models";
 import { isValidUUIDV4 } from "../utils/utils";
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 const NOTFOUND = { error: "Flash card not found." };
 

@@ -7,7 +7,7 @@ import { CardSet, FlashCard } from "../src/models/index";
 dotenv.config();
 
 let axiosClient: Axios;
-const baseURL = "/api/flashcard";
+let baseURL: string;
 let parentSetId: string;
 
 beforeAll(async () => {
@@ -25,6 +25,7 @@ beforeAll(async () => {
   });
 
   parentSetId = response.data.id;
+  baseURL = `/api/cardset/${response.data.id}/flashcard`;
 });
 
 afterAll(async () => {
@@ -32,7 +33,7 @@ afterAll(async () => {
   await CardSet.truncate({ cascade: true });
 });
 
-describe("/api/flashcard", () => {
+describe("/api/cardset/:setId/flashcard", () => {
   describe("POST", () => {
     test("When creating a flash card with valid data, it should return the created object and get a 201 response", async () => {
       const flashCardData = {
