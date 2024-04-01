@@ -47,7 +47,7 @@ export const update = async (id: string, updates: Partial<CardSet>) => {
     cardSet.title = updates.title;
   }
 
-  if (updates.description) {
+  if (typeof updates.description !== "undefined") {
     cardSet.description = updates.description;
   }
 

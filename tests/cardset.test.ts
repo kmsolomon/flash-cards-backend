@@ -264,6 +264,20 @@ describe("/api/cardset", () => {
         },
       });
     });
+    test("When updating only the card set description and setting it to an empty string it should return the updated object with a 200 response", async () => {
+      const updates = {
+        description: "",
+      };
+
+      const response = await axiosClient.put(`${baseURL}/${id}`, updates);
+      expect(response).toMatchObject({
+        status: 200,
+        data: {
+          title: "Update Test Suite",
+          description: updates.description,
+        },
+      });
+    });
     test("When trying to update the card set title to something longer than the max length it should return a 400 response", async () => {
       const updates = {
         title: "a".repeat(101),
