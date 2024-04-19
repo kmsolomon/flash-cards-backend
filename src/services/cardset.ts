@@ -23,7 +23,7 @@ export const getAll = async () => {
       include: [
         [
           sequelize.literal(
-            "(SELECT COUNT(*) from flashcards as cards where cards.cardset_id=cardset.id)"
+            "(SELECT COUNT(*)::int from flashcards as cards where cards.cardset_id=cardset.id)"
           ),
           "cards",
         ],
