@@ -98,6 +98,18 @@ describe("/api/cardset/:setId/flashcard", () => {
 
       expect(response.status).toBe(400);
     });
+
+    test("When creating a flash card with an non-existing cardsetId, it should return a 400 response", async () => {
+      const flashCardData = {
+        cardsetId: "b14d6382-d0c0-4f33-a33b-43272c9a6c0c",
+        question: "What does TDD stand for?",
+        answer: "Test driven development.",
+      };
+
+      const response = await axiosClient.post(baseURL, flashCardData);
+
+      expect(response.status).toBe(400);
+    });
   });
 
   describe("GET /", () => {
